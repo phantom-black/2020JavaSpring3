@@ -7,7 +7,10 @@
 <%!
 	//int a = 10; // <%일 때는 _jspservice 메소드 안임, 지역변수이므로 private 못 붙임
 	// 메소드 안에 메소드 만들 수 없으므로 <%!와 같이 ! 붙여서 메소드 바깥으로 보내야만
+	// <%=은 표현식, HTML에서 찍을 때 사용
 	// request, response 등 내장객체 -> 따로 지정하지 않아도 사용가능
+	
+	// 통신은 정수값->문자열, 전부 문자열로 보내면 그것을 해석해서 HTML 등으로 해석하는 것
 	Connection getCon() throws Exception {
 		String url="jdbc:oracle:thin:@localhost:1521:orcl";
 		String username="hr";
@@ -47,7 +50,7 @@
 		
 	} catch(Exception e) {
 		e.printStackTrace();
-	} finally {
+	} finally { // 중요! 열었으면 닫아야, 먼저 연 것을 중에 닫아야(FILO), 하나 에러 터지더라도 나머지는 닫힐 수 있도록 각각 닫아줘야 함
 		if(rs != null) { try { rs.close(); } catch(Exception e) {} }
 		if(ps != null) { try { ps.close(); } catch(Exception e) {} }
 		if(con != null) { try { con.close(); } catch(Exception e) {} }
@@ -70,7 +73,11 @@
 		<% for(BoardVO vo : boardList) { %>
 		<tr>
 			<td><%= vo.getI_board() %></td>
-			<td><%= vo.getTitle() %></td>
+			<td>
+				<a href="/jsp/boardDetail.jsp?i_board=<%= vo.getI_board() %>">
+					<%= vo.getTitle() %>
+				</a>
+			</td>	
 		</tr>
 		<% } %>
 
