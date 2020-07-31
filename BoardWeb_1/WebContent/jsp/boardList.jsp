@@ -63,7 +63,10 @@
 <title>게시판</title>
 </head>
 <body>
-	<div>게시판 리스트</div>
+	<div>
+		게시판 리스트
+		<a href="/jsp/boardWrite.jsp"><button>글쓰기</button></a>
+	</div>
 	<table>
 		<tr>
 			<th>No</th>
@@ -80,7 +83,6 @@
 			</td>	
 		</tr>
 		<% } %>
-
 	</table>
 </body>
 </html>
