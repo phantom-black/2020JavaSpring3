@@ -29,7 +29,7 @@
 	PreparedStatement ps = null; // 쿼리문실행담당+문장완성기능(printf와 비슷한 기능)
 	ResultSet rs = null; // select문일 때만 사용
 	 
-	String sql = " SELECT i_board, title FROM t_board ";
+	String sql = " SELECT i_board, title FROM t_board ORDER BY i_board DESC ";
 	
 	try {
 		con = getCon(); // 연결
