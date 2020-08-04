@@ -40,7 +40,7 @@
 	ResultSet rs = null;
 	
 	// String sql = "SELECT title, ctnt, i_student FROM t_board WHERE i_board = " + strI_board;
-	String sql = "SELECT title, ctnt, i_student FROM t_board WHERE i_board = ?";
+	String sql = " SELECT title, ctnt, i_student FROM t_board WHERE i_board = ? ";
 	
 	try {
 		con = getCon();
