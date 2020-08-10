@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.koreait.board.common.Utils;
+import com.koreait.board.db.BoardDAO;
 import com.koreait.board.vo.BoardVO;
 
 /**
@@ -26,18 +27,26 @@ public class BoardWriteSer extends HttpServlet {
 		String title = request.getParameter("title");
 		String ctnt = request.getParameter("ctnt");
 		String strI_student = request.getParameter("i_student");
-		int i_student = Utils.parseStrToInt(strI_student);
 		
-		if(i_student == 0) {
-			request.setAttribute("msg", "잘못된 값이 있습니다.");
-			doGet(request, response);
-		}
+		// 단위테스트, 에러 빨리 찾을 수 있음, 값이 잘 넘어왔는지 꼭 테스트해보고 넘어가기
+		System.out.println("title: "+title);
+		System.out.println("ctnt: "+ctnt);
+		System.out.println("strI_student: "+strI_student);
 		
 		BoardVO param = new BoardVO();
 		param.setTitle(title);
 		param.setCtnt(ctnt);
-		param.setI_student(i_student);
+		param.setI_student(Utils.parseStrToInt(strI_student));
 		
+		int result = BoardDAO.insBoard(param);
+		System.out.println("result: " + result);
+
+		/*
+		if(i_student == 0) {
+			request.setAttribute("msg", "잘못된 값이 있습니다.");
+			doGet(request, response);
+		}
+		*/
 		
 	}
 

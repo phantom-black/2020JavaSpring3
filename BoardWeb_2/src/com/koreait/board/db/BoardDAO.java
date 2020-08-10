@@ -9,6 +9,7 @@ import java.util.List;
 import com.koreait.board.vo.BoardVO;
 
 public class BoardDAO {
+	// CRUD 순으로 정렬, 앞에 ins, sel 등으로 표시하는 게 좋음
 	
 	public static int insBoard(BoardVO param) {
 		int result = 0;
@@ -17,18 +18,23 @@ public class BoardDAO {
 		PreparedStatement ps = null;
 		
 		String sql = " INSERT INTO t_board "
-				+ " (title, ctnt, i_student) "
+				+ " (i_board, title, ctnt, i_student) "
 				+ " VALUES "
-				+ " (?, ?, ?) ";
+				+ " (seq_board.nextval, ?, ?, ?) "; // 시퀀스 만들고나서 사용하는 것
 		
 		try {
 			con = DbCon.getCon();
 			ps = con.prepareStatement(sql);
 			ps.setNString(1,  param.getTitle());
 			ps.setNString(2,  param.getCtnt());
-			ps.setInt(3,  param.getI_board());
+			ps.setInt(3,  param.getI_student());
 			
-			result = ps.executeUpdate();		
+			// 쿼리문 실행 명령어
+			// ps.excute();
+			// ps.excuteUpdate();
+			// ps.excuteQuery(); // select 때만 사용
+
+			result = ps.executeUpdate();
 			
 		} catch (Exception e) {		
 			e.printStackTrace();
