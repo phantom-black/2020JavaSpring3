@@ -5,17 +5,19 @@
 <head>
 <meta charset="UTF-8">
 <title>글쓰기</title>
+<style>
+	.err { color: #e74c3c; }
+</style>
 </head>
 <body>
-	<div>${msg}</div>
-	<div>
-		<form id="frm" action="/boardWrite" method="post" onsubmit="return chk()">
-			<div><label>제목: <input type="text" name="title"></label></div>
-			<div><label>내용: <textarea name="ctnt"></textarea></label></div>
-			<div><label>작성자: <input type="text" name="i_student"></label></div>
-			<div><input type="submit" value="글등록"></div>
-		</form>
-	</div>
+	<div>글쓰기</div>
+	<div class="err">${msg}</div>
+	<form id="frm" action="/boardWrite" method="post" onsubmit="return chk()">
+		<div><label>제목: <input type="text" name="title"></label></div>
+		<div><label>내용: <textarea name="ctnt"></textarea></label></div>
+		<div><label>작성자: <input type="text" name="i_student"></label></div>
+		<div><input type="submit" value="글등록"></div>
+	</form>
 	<script>
 		function eleValid(ele) {
 			if(ele.value.length == 0) {

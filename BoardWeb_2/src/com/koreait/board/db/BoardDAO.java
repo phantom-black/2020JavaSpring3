@@ -121,4 +121,29 @@ public class BoardDAO {
 		
 		return vo;
 	}
+	
+	public static int delBoard(BoardVO param) {
+		int result = 0;
+		
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		String sql = " DELETE FROM t_board "
+					+ " WHERE i_board=? ";
+		
+		try {
+			con = DbCon.getCon();
+			ps = con.prepareStatement(sql);
+			
+			ps.setInt(1, param.getI_board());
+			
+			result = ps.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DbCon.close(con, ps);
+		}
+		
+		return result;
+	}
 }

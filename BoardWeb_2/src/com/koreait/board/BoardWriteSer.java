@@ -41,12 +41,14 @@ public class BoardWriteSer extends HttpServlet {
 		int result = BoardDAO.insBoard(param);
 		System.out.println("result: " + result);
 
-		/*
-		if(i_student == 0) {
-			request.setAttribute("msg", "잘못된 값이 있습니다.");
+		
+		if(result == 1) { // 정상
+			response.sendRedirect("/boardList");
+		} else {
+			request.setAttribute("msg", "에러가 발생하였습니다.");
 			doGet(request, response);
 		}
-		*/
+		
 		
 	}
 
