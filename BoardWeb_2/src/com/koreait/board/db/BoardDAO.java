@@ -122,6 +122,36 @@ public class BoardDAO {
 		return vo;
 	}
 	
+	public static int updBoard(BoardVO param) {
+		int result = 0;
+		
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		String sql = " UPDATE t_board "
+					+ " SET title = ? "
+					+ " , ctnt = ? "
+					+ " WHERE i_board = ? ";
+		
+		try {
+			con = DbCon.getCon();
+			ps = con.prepareStatement(sql);
+			
+			ps.setNString(1, param.getTitle());
+			ps.setNString(2, param.getCtnt());
+			ps.setInt(3, param.getI_board());
+			
+			result = ps.executeUpdate();
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DbCon.close(con, ps);
+		}
+		
+		return result;
+	}
+	
 	public static int delBoard(BoardVO param) {
 		int result = 0;
 		
