@@ -31,7 +31,7 @@ public class LoginSer extends HttpServlet {
 		param.setUser_id(user_id);
 		param.setUser_pw(encrypt_pw);
 		
-		int result = UserDAO.selUser(param);
+		int result = UserDAO.login(param);
 		
 		// param (i_user, user_id, nm)
 		
