@@ -9,7 +9,6 @@ public class BoardVO {
 	private String r_dt;
 	private String m_dt;
 	
-	
 	public int getI_board() {
 		return i_board;
 	}

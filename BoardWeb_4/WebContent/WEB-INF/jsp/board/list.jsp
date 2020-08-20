@@ -25,14 +25,14 @@
 	<h1>리스트</h1>
 	<table>
 		<tr>
-			<th>No</th>
-			<th>글 제목</th>
+			<th>번호</th>
+			<th>제목</th>
 			<th>조회수</th>
 			<th>작성자</th>
-			<th>작성일</th>
+			<th>등록일시</th>
 		</tr>
 		<c:forEach items="${list}" var="item">
-		<tr>
+		<tr class="itemRow" onclick="moveToDetail(${item.i_board})">
 			<td>${item.i_board}</td>
 			<td>${item.title}</td>
 			<td>${item.hits}</td>
@@ -41,5 +41,11 @@
 		</tr>
 		</c:forEach>
 	</table>
+		<script>
+		function moveToDetail(i_board) {
+			console.log("moveToDetail = i_board: " + i_board)
+			location.href = "/board/detail?i_board=" + i_board
+		}
+	</script>
 </body>
 </html>

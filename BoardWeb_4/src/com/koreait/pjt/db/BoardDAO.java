@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.koreait.pjt.vo.BoardDomain;
 import com.koreait.pjt.vo.BoardVO;
 
 public class BoardDAO {
@@ -24,6 +25,40 @@ public class BoardDAO {
 				ps.setInt(3, param.getI_user());
 			}
 		});
+	}
+	
+	public static BoardDomain selBoard(final int i_board) {
+		final BoardDomain result = new BoardDomain();
+		result.setI_board(i_board);
+		
+		String sql = " SELECT "
+						+ " A.title, A.i_user, B.nm, to_char(A.r_dt, 'YY/MM/DD HH24:MI') as r_dt, A.hits, A.ctnt "
+						+ " FROM t_board4 A "
+						+ " INNER JOIN t_user B "
+						+ " ON A.i_user = B.i_user "
+						+ " WHERE i_board=? ";
+		
+		int resultInt = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
+			@Override
+			public void prepared(PreparedStatement ps) throws SQLException { // 쿼리문 문장 완성
+				ps.setInt(1, i_board);
+			}
+
+			@Override
+			public int executeQuery(ResultSet rs) throws SQLException {
+				if(rs.next()) {
+					result.setI_user (rs.getInt("i_user"));
+					result.setTitle(rs.getNString("title"));
+					result.setNm(rs.getNString("nm"));
+					result.setR_dt(rs.getNString("r_dt"));
+					result.setHits(rs.getInt("hits"));
+					result.setCtnt(rs.getNString("ctnt"));
+				}
+				return 1;
+			}
+		});
+		
+		return result;
 	}
 	
 	public static List<BoardVO> selBoardList() {
@@ -60,5 +95,36 @@ public class BoardDAO {
 		});
 		
 		return list;
+	}
+	
+	public static int updBoard(BoardVO param) {
+		String sql = " UPDATE t_board4 "
+					+ " SET title = ? "
+					+ " , ctnt = ? "
+					+ " , m_dt = sysdate "
+					+ " WHERE i_board = ? ";
+		
+		return JdbcTemplate.executeUpdate(sql, new JdbcUpdateInterface() {
+
+			@Override
+			public void update(PreparedStatement ps) throws SQLException {
+				ps.setNString(1, param.getTitle());
+				ps.setNString(2, param.getCtnt());
+				ps.setInt(3, param.getI_board());
+			}
+		});
+	}
+	
+	public static int delBoard(final BoardVO param) {
+		String sql = " DELETE FROM t_board4 "
+					+ " WHERE i_board = ? AND i_user = ? ";
+		
+		return JdbcTemplate.executeUpdate(sql, new JdbcUpdateInterface() {
+			@Override
+			public void update(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, param.getI_board());
+				ps.setInt(2, param.getI_user());
+			}
+		});
 	}
 }

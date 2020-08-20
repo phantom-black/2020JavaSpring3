@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.koreait.pjt.Const;
+import com.koreait.pjt.MyUtils;
 import com.koreait.pjt.ViewResolver;
 import com.koreait.pjt.db.BoardDAO;
+import com.koreait.pjt.vo.BoardDomain;
 import com.koreait.pjt.vo.BoardVO;
 import com.koreait.pjt.vo.UserVO;
 
@@ -20,32 +22,55 @@ public class BoardRegmodSer extends HttpServlet {
 
 	// 화면 띄우는 용도(등록창/수정창)
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession hs = request.getSession();
-		if(null==hs.getAttribute(Const.LOGIN_USER)) {
-			response.sendRedirect("/login");
-			return;
+//		HttpSession hs = request.getSession();
+//		if(null==hs.getAttribute(Const.LOGIN_USER)) {
+//			response.sendRedirect("/login");
+//			return;
+//		}
+		String strI_board = request.getParameter("i_board");
+		int i_board = MyUtils.parseStrToInt(strI_board);
+		
+		if(i_board!=0) {
+
+			BoardDomain param = BoardDAO.selBoard(i_board);
+			
+			request.setAttribute("data", param);
+
 		}
 		
-		ViewResolver.forward("/board/regmod", request, response); // 파일 담당, 파일명 넣어야
+
+		ViewResolver.forwardLoginChk("/board/regmod", request, response); // 파일 담당, 파일명 넣어야
 	}
 
 	// 처리 용도(DB에 등록/수정) 실시
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String strI_board = request.getParameter("i_board");
 		String title = request.getParameter("title");
 		String ctnt = request.getParameter("ctnt");
-		
+
+		System.out.println("i_board: "+strI_board);
 		System.out.println("title: "+title);
 		System.out.println("ctnt: "+ctnt);
 		
-		HttpSession hs = request.getSession();
-		UserVO loginUser = (UserVO)hs.getAttribute(Const.LOGIN_USER);
-		
 		BoardVO param = new BoardVO();
-		param.setTitle(title);
-		param.setCtnt(ctnt);
-		param.setI_user(loginUser.getI_user());
+		int result;
+		if(strI_board != "") {
+			param.setI_board(Integer.parseInt(strI_board));
+			param.setTitle(title);
+			param.setCtnt(ctnt);
+			
+			result = BoardDAO.updBoard(param);
+		} else {
+			HttpSession hs = request.getSession();
+			UserVO loginUser = (UserVO)hs.getAttribute(Const.LOGIN_USER);
+			
+			param.setTitle(title);
+			param.setCtnt(ctnt);
+			param.setI_user(loginUser.getI_user());
+			
+			result = BoardDAO.insBoard(param);
+		}
 		
-		int result = BoardDAO.insBoard(param);
 		System.out.println("result: " + result);
 		
 		if(result != 1) {

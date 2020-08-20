@@ -1,7 +1,13 @@
 package com.koreait.pjt;
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import com.koreait.pjt.vo.UserVO;
 
 public class MyUtils {
 	public static String encryptString(String str) {
@@ -25,5 +31,30 @@ public class MyUtils {
 	      }
 
 	      return sha;
+	}
+	
+	public static UserVO getLoginUser(HttpServletRequest request) {
+		HttpSession hs = request.getSession();
+		return (UserVO)hs.getAttribute(Const.LOGIN_USER);
+	}
+	
+	   // return true: 로그인이 안됨!, false: 로그인된 상태
+	public static boolean isLogout(HttpServletRequest request) throws IOException {
+	      if(null == getLoginUser(request)) {
+	         return true;
+	      }
+	      return false;
+	}
+	
+	public static int parseStrToInt(String str) {
+		return parseStrToInt(str, 0);
+	}
+	
+	public static int parseStrToInt(String str, int n) {
+		try {
+			return Integer.parseInt(str);
+		} catch(Exception e) {
+			return n;
+		}
 	}
 }
