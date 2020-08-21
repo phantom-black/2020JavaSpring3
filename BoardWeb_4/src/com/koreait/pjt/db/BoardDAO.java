@@ -97,12 +97,13 @@ public class BoardDAO {
 		return list;
 	}
 	
-	public static int updBoard(BoardVO param) {
+	public static int updBoard(final BoardVO param) { // final 쓰면 더 빠르다고 함
 		String sql = " UPDATE t_board4 "
-					+ " SET title = ? "
+					+ " SET m_dt = sysdate "
+					+ " , title = ? "
 					+ " , ctnt = ? "
-					+ " , m_dt = sysdate "
-					+ " WHERE i_board = ? ";
+					+ " WHERE i_board = ? "
+					+ " AND i_user = ? ";
 		
 		return JdbcTemplate.executeUpdate(sql, new JdbcUpdateInterface() {
 
@@ -111,7 +112,22 @@ public class BoardDAO {
 				ps.setNString(1, param.getTitle());
 				ps.setNString(2, param.getCtnt());
 				ps.setInt(3, param.getI_board());
+				ps.setInt(4, param.getI_user());
 			}
+		});
+	}
+	
+	public static void addHits(final int i_board) {
+		String sql = " UPDATE t_board4 "
+						+ " SET hits = hits + 1 "
+						+ " WHERE i_board = ? ";
+		
+		JdbcTemplate.executeUpdate(sql, new JdbcUpdateInterface() {
+			@Override
+			public void update(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, i_board);
+			}
+			
 		});
 	}
 	

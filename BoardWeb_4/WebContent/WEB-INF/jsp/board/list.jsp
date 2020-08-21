@@ -18,7 +18,7 @@
 </style>
 </head>
 <body>
-	<div class="welcome">${loginUser.nm}님, 환영합니다!</div>
+	<div class="welcome">${loginUser.nm}님, 환영합니다! <a href="/logout">로그아웃</a></div>
 	<div>
 		<a href="/regmod">글쓰기</a>
 	</div>
@@ -43,7 +43,7 @@
 	</table>
 		<script>
 		function moveToDetail(i_board) {
-			console.log("moveToDetail = i_board: " + i_board)
+			//console.log("moveToDetail = i_board: " + i_board)
 			location.href = "/board/detail?i_board=" + i_board
 		}
 	</script>
