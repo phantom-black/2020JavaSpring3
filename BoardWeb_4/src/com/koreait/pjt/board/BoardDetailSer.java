@@ -43,7 +43,6 @@ public class BoardDetailSer extends HttpServlet {
 		// 단독으로 조회수 올리기 방지! --- [end]
 		
 		request.setAttribute("data", BoardDAO.selBoard(i_board));
-		
 		ViewResolver.forward("board/detail", request, response); // 주솟값 아니라 파일명
 	}
 

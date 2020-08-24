@@ -7,7 +7,9 @@
 <meta charset="UTF-8">
 <title>상세 페이지</title>
 <style>
-	
+	.hidden { overflow: hidden; text-indent: -9999px; }
+	.off { color: #000; }
+	.on { color: #f00; }
 </style>
 </head>
 <body>
