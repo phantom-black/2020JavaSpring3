@@ -37,7 +37,7 @@ public class ToggleLikeSer extends HttpServlet {
 			BoardDAO.delBoardLike(param);
 		}
 		
-		/*
+		/*0
 		BoardDomain bd = new BoardDomain();
 		bd.setI_user(i_user);
 		bd.setI_board(MyUtils.parseStrToInt(strI_board));
