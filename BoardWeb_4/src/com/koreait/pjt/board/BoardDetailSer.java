@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.koreait.pjt.MyUtils;
 import com.koreait.pjt.ViewResolver;
 import com.koreait.pjt.db.BoardDAO;
+import com.koreait.pjt.vo.BoardVO;
 import com.koreait.pjt.vo.UserVO;
 
 
@@ -37,17 +38,20 @@ public class BoardDetailSer extends HttpServlet {
 		if(readI_user==null || readI_user != loginUser.getI_user()) { // int와 Integer 값 비교 가능
 			// 조회수를 올려주세요!!
 			BoardDAO.addHits(i_board);
-			
 			application.setAttribute("read_"+strI_board, loginUser.getI_user());
 		}
 		// 단독으로 조회수 올리기 방지! --- [end]
 		
-		request.setAttribute("data", BoardDAO.selBoard(i_board));
+		BoardVO param = new BoardVO();
+		param.setI_user(loginUser.getI_user());
+		param.setI_board(i_board);
+		request.setAttribute("data", BoardDAO.selBoard(param));
+		
 		ViewResolver.forward("board/detail", request, response); // 주솟값 아니라 파일명
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+
 	}
 
 }

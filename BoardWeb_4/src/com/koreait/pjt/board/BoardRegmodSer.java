@@ -36,7 +36,9 @@ public class BoardRegmodSer extends HttpServlet {
 		
 		if(strI_board != null) {
 			int i_board = MyUtils.parseStrToInt(strI_board);
-			request.setAttribute("data", BoardDAO.selBoard(i_board));
+			BoardVO param = new BoardVO();
+			param.setI_board(i_board);
+			request.setAttribute("data", BoardDAO.selBoard(param));
 		}
 
 		ViewResolver.forwardLoginChk("board/regmod", request, response); // 파일 담당, 파일명 넣어야
@@ -50,24 +52,27 @@ public class BoardRegmodSer extends HttpServlet {
 		
 		UserVO loginUser = MyUtils.getLoginUser(request);
 		
+		System.out.println("title: "+title);
+		System.out.println("ctnt: "+ctnt);
+		
 		BoardVO param = new BoardVO();
 		param.setTitle(title);
 		param.setCtnt(ctnt);
 		param.setI_user(loginUser.getI_user());
 		
-		int result;
-		if("".contentEquals(strI_board)) { // 등록
+		int result=0;
+		
+		if("".equals(strI_board)) { // 등록
 			result = BoardDAO.insBoard(param);
 			response.sendRedirect("/board/list"); // 주소 이동, VIewResolver는 파일 여는 것->로그인체크 다시 해줘야 함
-			return;
-		} else {
-			// 수정
+		} else { // 수정
 			int i_board = MyUtils.parseStrToInt(strI_board);
 			param.setI_board(i_board);
 			result = BoardDAO.updBoard(param);
+			System.out.println("result: " + result);
+			response.sendRedirect("/board/detail?i_board="+strI_board);
 		}
-		System.out.println("result: " + result);
-		response.sendRedirect("/board/detail?i_board="+strI_board);
+		
 //		if(result != 1) {
 //			String msg = "에러가 발생하였습니다. 문제가 계속 발생한다면 관리자에게 문의하십시오.";
 //			
