@@ -91,6 +91,12 @@
         .pointerCursor {
         	cursor: pointer;
         }
+        .marginTop30 {
+        	margin=top: 30px;
+        }
+        #cmt {
+        	width: 630px;
+        }
     </style>
 </head>
 
@@ -133,15 +139,50 @@
                 </form>
             </c:if>
         </div>
+        
+        <div class="marginTop30">
+        	<form id="cmtFrm" action="/board/cmt" method="post">
+        		<input type="hidden" name="i_cmt" value="0">
+        		<input type="hidden" name="i_board" value="${data.i_board}">
+        		<div>
+        			<input type="text" id="cmt" name="cmt" placeholder="댓글내용">
+        			<input type="submit" value="전송">
+        		</div>
+        	</form>
+        </div>
+        <div class="marginTop30">
+        	<table>
+        		<tr>
+        			<th>내용</th>
+        			<th>글쓴이</th>
+        			<th>등록일</th>
+        			<th>비고</th>
+        		</tr>
+        		<c:forEach items="${cmtList}" var="item">
+        			<tr>
+        				<td>${item.cmt}</td>
+        				<td>${item.nm}</td>
+        				<td>${item.r_dt}</td>
+        				<td>
+        					<c:if test="${item.i_user==loginUser.i_user}">
+        						<a href="/board/cmt?i_board=${data.i_board}&i_cmt=${item.i_cmt}"><button>삭제</button></a>
+        						<button>수정</button>
+        					</c:if>
+        				</td>
+        			</tr>
+        		</c:forEach>
+        	</table>
+        </div>
     </div>
 
     <script>
+    
+	    function toggleLike(yn_like) {
+	    	location.href="/board/toggleLike?i_board=${data.i_board}&yn_like="+yn_like // 쿼리스트링 =좌변: key값, =우변: value값
+	    }
+    
         function submitDel() {
             delFrm.submit()
-        }
-        
-        function toggleLike(yn_like) {
-        	location.href="/board/toggleLike?i_board=${data.i_board}&yn_like="+yn_like // 쿼리스트링 =좌변: key값, =우변: value값
         }
     </script>
 </body>

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.koreait.pjt.MyUtils;
 import com.koreait.pjt.ViewResolver;
+import com.koreait.pjt.db.BoardCmtDAO;
 import com.koreait.pjt.db.BoardDAO;
 import com.koreait.pjt.vo.BoardVO;
 import com.koreait.pjt.vo.UserVO;
@@ -46,6 +47,8 @@ public class BoardDetailSer extends HttpServlet {
 		param.setI_user(loginUser.getI_user());
 		param.setI_board(i_board);
 		request.setAttribute("data", BoardDAO.selBoard(param));
+		
+		request.setAttribute("cmtList", BoardCmtDAO.selCmtList(param));
 		
 		ViewResolver.forward("board/detail", request, response); // 주솟값 아니라 파일명
 	}
