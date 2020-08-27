@@ -34,12 +34,14 @@ public class BoardCmtSer extends HttpServlet {
 	
 	// 댓글 (등록/수정)
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		UserVO loginUser = MyUtils.getLoginUser(request);
+		
 		String strI_cmt = request.getParameter("i_cmt");
 		String strI_board = request.getParameter("i_board");
 		String cmt = request.getParameter("cmt");
 		
 		int i_board = MyUtils.parseStrToInt(strI_board);
+		
+		UserVO loginUser = MyUtils.getLoginUser(request);
 
 		BoardCmtVO param = new BoardCmtVO();
 		param.setCmt(cmt);
@@ -51,9 +53,11 @@ public class BoardCmtSer extends HttpServlet {
 				BoardCmtDAO.insCmt(param);
 				
 				break;
-			default: // 수정
-				param.setI_cmt(MyUtils.parseStrToInt(strI_cmt));
-				BoardCmtDAO.updCmt();
+			default: // 수정(수정 일자 변경)
+				int i_cmt = MyUtils.parseStrToInt(strI_cmt);
+				param.setI_cmt(i_cmt);
+				
+				BoardCmtDAO.updCmt(param);
 				
 				break;
 		}

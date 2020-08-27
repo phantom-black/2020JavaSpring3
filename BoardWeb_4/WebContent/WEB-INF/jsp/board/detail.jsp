@@ -146,7 +146,8 @@
         		<input type="hidden" name="i_board" value="${data.i_board}">
         		<div>
         			<input type="text" id="cmt" name="cmt" placeholder="댓글내용">
-        			<input type="submit" value="전송">
+        			<input type="submit" id="cmtSubmit" value="전송">
+        			<input type="button" value="취소" onclick="clkCmtCancel()">
         		</div>
         	</form>
         </div>
@@ -165,8 +166,8 @@
         				<td>${item.r_dt}</td>
         				<td>
         					<c:if test="${item.i_user==loginUser.i_user}">
-        						<a href="/board/cmt?i_board=${data.i_board}&i_cmt=${item.i_cmt}"><button>삭제</button></a>
-        						<button>수정</button>
+        						<button onclick="clkCmtDel(${item.i_cmt})">삭제</button>
+        						<button onclick="clkCmtMod(${item.i_cmt}, ${item.cmt})">수정</button>
         					</c:if>
         				</td>
         			</tr>
@@ -176,6 +177,27 @@
     </div>
 
     <script>
+    	function clkCmtCancel() {
+    		cmtFrm.i_cmt.value = 0
+    		cmtFrm.cmt = ''
+    		cmtSubmit.value = '전송'
+    	}
+    	
+    	function clkCmtDel(i_cmt) {
+    		if(confirm('삭제하시겠습니까?')) {
+    			location.href = '/board/cmt?i_board=${data.i_board}&i_cmt=' + i_cmt
+    		}
+    	}
+    
+    	// 댓글 수정
+    	function clkCmtMod(i_cmt, cmt) {
+    		console.log('i_cmt: '+i_cmt)
+    		
+    		cmtFrm.i_cmt.value = i_cmt
+    		cmtFrm.cmt.value = cmt
+    		
+    		cmtSubmit.value = '수정'
+    	}
     
 	    function toggleLike(yn_like) {
 	    	location.href="/board/toggleLike?i_board=${data.i_board}&yn_like="+yn_like // 쿼리스트링 =좌변: key값, =우변: value값

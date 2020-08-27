@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.koreait.pjt.Const;
 import com.koreait.pjt.vo.BoardDomain;
 import com.koreait.pjt.vo.BoardVO;
 
@@ -84,17 +85,28 @@ public class BoardDAO {
 		return result;
 	}
 	
-	public static List<BoardDomain> selBoardList() {
+	public static List<BoardDomain> selBoardList(final BoardDomain param) {
 		List<BoardDomain> list = new ArrayList();
 		
-		String sql = " SELECT A.i_board, A.title, A.hits, A.i_user, A.r_dt, B.nm "
-				+ " FROM t_board4 A INNER JOIN t_user B ON A.i_user = B.i_user "
-				+ " ORDER BY i_board DESC ";
+		String sql = " SELECT A.* FROM "
+					+ " ( "
+					+ " 	    SELECT ROWNUM as RNUM, A.* FROM "
+					+ " 	    ( "
+					+ " 	        SELECT A.i_board, A.title, A.hits, A.i_user, A.r_dt, B.nm "
+					+ " 	        FROM t_board4 A INNER JOIN t_user B ON A.i_user = B.i_user "
+					+ " 	        ORDER BY i_board DESC "
+					+ " 	    ) A "
+					+ " 	    WHERE ROWNUM <= ? "
+					+ " 	) A "
+					+ "	WHERE A.RNUM > ? ";
 		
 		int result = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 
 			@Override
-			public void prepared(PreparedStatement ps) throws SQLException {}
+			public void prepared(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, param.geteIdx());
+				ps.setInt(2,  param.getsIdx());
+			}
 
 			@Override
 			public int executeQuery(ResultSet rs) throws SQLException {
@@ -121,6 +133,26 @@ public class BoardDAO {
 		});
 		
 		return list;
+	}
+	
+	// 페이징 숫자 가져오기
+	public static int selPagingCnt(final BoardDomain param) {
+		String sql = " SELECT CEIL(COUNT(i_board) / ?) FROM t_board4 "; // *보다 i_board 적는 게 속도 빠름
+		
+		return JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
+			@Override
+			public void prepared(PreparedStatement ps) throws SQLException {
+				ps.setInt(1,  param.getRecord_cnt());			
+			}
+
+			@Override
+			public int executeQuery(ResultSet rs) throws SQLException {
+				if(rs.next()) {
+					return rs.getInt(1); // 스칼라값 가져오는 거임~ 인덱스로 가져오는 방법, 컬럼명은 ""
+				}
+				return 0;
+			}
+		});
 	}
 	
 	public static int updBoard(final BoardVO param) { // final 쓰면 더 빠르다고 함
