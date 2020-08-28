@@ -8,6 +8,15 @@ public class BoardDomain extends BoardVO { // select용
 	private int record_cnt;
 	private int eIdx;
 	private int sIdx;
+	private String searchText;
+
+	public String getSearchText() {
+		return searchText;
+	}
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
 
 	public int getRecord_cnt() {
 		return record_cnt;

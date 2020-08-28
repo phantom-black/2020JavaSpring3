@@ -128,7 +128,7 @@
             ${data.ctnt }
         </div>
         <div class="btn">
-             <a href="/board/list"><button type="button">목록</button></a>
+             <a href="/board/list?page=${param.page}&record_cnt=${param.record_cnt}&searchText=${param.searchText}"><button type="button">목록</button></a>
              <c:if test="${loginUser.i_user == data.i_user }">
                 <a href="/regmod?i_board=${data.i_board}">
                 	<button type="submit">수정</button>
@@ -200,7 +200,7 @@
     	}
     
 	    function toggleLike(yn_like) {
-	    	location.href="/board/toggleLike?i_board=${data.i_board}&yn_like="+yn_like // 쿼리스트링 =좌변: key값, =우변: value값
+	    	location.href="/board/toggleLike?page=${param.page}&record_cnt=${param.record_cnt}&searchText}&i_board=${data.i_board}&yn_like="+yn_like // 쿼리스트링 =좌변: key값, =우변: value값
 	    }
     
         function submitDel() {

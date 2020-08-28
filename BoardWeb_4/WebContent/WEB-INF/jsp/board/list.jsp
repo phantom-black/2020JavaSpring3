@@ -87,25 +87,26 @@
 </style>
 </head>
 <body>
-	
 	<div class="container">
 		<div class="usr-name">
 			<span id="usr-color">${loginUser.nm}</span>님 환영합니다
+			<a href="/profile">프로필</a>
 			<a href="/logout"><button id="logout">로그아웃</button></a>
 		</div>
 		<div>
 			<form id="selFrm" action="/board/list" method="get">
-				<input type="hidden" name="page" value="${param.page == null ? 1 : param.page}">
-				레코드 수 : 
+				<input type="hidden" name="page" value="${page}">
+				<input type="hidden" name="searchText" value="${param.searchText}">
+				레코드 수 :
 				<select name="record_cnt" onchange="changeRecordCnt()">
 					<c:forEach begin="10" end="30" step="10" var="item">
 						<c:choose>
-							<c:when test="${param.record_cnt == item || param.record_cnt == null }">
+							<c:when test="${param.record_cnt == item}">
 								<option value="${item}" selected>${item}개</option>
 							</c:when>
 							<c:otherwise>
-								<option value="${item}">${item}개</option>
-							</c:otherwise>
+								<option value="${item}">${item}개</option>	
+							</c:otherwise>							
 						</c:choose>
 					</c:forEach>
 				</select>
@@ -129,29 +130,37 @@
 				</tr>
 			</c:forEach>
 		</table>
+		<div>
+			<form action="/board/list">
+				<input type="search" name="searchText">
+				<input type="submit" value="검색">
+			</form>
+		</div>
 		<div class="fontCenter">
 			<c:forEach begin="1" end="${pagingCnt}" var="item">
 				<c:choose>
-					<c:when test="${param.page == item || (param.page == null && item == 1)}">
+					<c:when test="${page == item}">
 						<span class="pageSelected">${item}</span>
 					</c:when>
 					<c:otherwise>
-						<span><a href="/board/list?page=${item}">${item}</a></span>
+						<span>
+							<a href="/board/list?page=${item}&record_cnt=${param.record_cnt}&searchText=${param.searchText}">${item}</a>
+						</span>
 					</c:otherwise>
 				</c:choose>
 			</c:forEach>
 		</div>
 		<div>
-			<a href="/regmod"><button id="write" class="pointerCursor">글작성</button></a>
+			<a href="regmod"><button id="write">글작성</button></a>
 		</div>
 	</div>
-	<script>	
+	<script>
 		function changeRecordCnt() {
 			selFrm.submit()
 		}
 	
 		function moveToDetail(i_board) {
-			location.href = '/board/detail?i_board=' + i_board
+			location.href = '/board/detail?page=${page}&record_cnt=${param.record_cnt}&searchText=${param.searchText}&i_board=' + i_board
 		}
 	</script>
 </body>
