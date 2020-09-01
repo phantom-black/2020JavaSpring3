@@ -84,6 +84,18 @@
 		font-weight: bold;
 		/*pointer-events: none;*/ 
 	}
+	.containerPImg {
+		display: inline-block;
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		overflow: hidden;
+	}
+	.pImg {
+		object-fit: cover;
+		width: 100%;
+		height: 100%;
+	}
 </style>
 </head>
 <body>
@@ -117,16 +129,33 @@
 				<th>No</th>
 				<th>제목</th>
 				<th>조회수</th>
+				<th> </th>
 				<th>작성자</th>
 				<th>작성일</th>
+				<th>좋아요갯수</th>
+				<th>Y/N</th>
 			</tr>
 			<c:forEach items="${list}" var="item">
 				<tr class="itemRow" onclick="moveToDetail(${item.i_board})">
 					<td>${item.i_board}</td>
-					<td>${item.title}</td>
-					<td>${item.hits}</td>
+					<td>${item.title}(${item.cmt_cnt})</td>
+					<td>${item.hits} </td>
+					<td>
+						<div class="containerPImg">
+							<c:choose>
+								<c:when test="${item.profile_img != null}">
+									<img class="pImg" src="/img/user/${item.i_user}/${item.profile_img}">
+								</c:when>
+								<c:otherwise>
+									<img class="pImg" src="/img/default_profile.jpg">
+								</c:otherwise>
+							</c:choose>
+						</div>
+					</td>
 					<td>${item.nm}</td>
 					<td>${item.r_dt}</td>
+					<td>${item.like_cnt }</td>
+					<td>${item.my_like }</td>
 				</tr>
 			</c:forEach>
 		</table>

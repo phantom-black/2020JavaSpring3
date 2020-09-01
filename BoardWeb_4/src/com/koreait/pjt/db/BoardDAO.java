@@ -49,7 +49,7 @@ public class BoardDAO {
 		final BoardDomain result = new BoardDomain();
 		result.setI_board(param.getI_board());
 		
-		String sql = " SELECT B.nm, A.i_user "
+		String sql = " SELECT B.nm, B.profile_img, A.i_user "
 					+ " , A.title, A.ctnt, A.hits, TO_CHAR(A.r_dt, 'YY/MM/DD HH24:MI') as r_dt "
 					+ " , DECODE(C.i_user, null, 0, 1) as yn_like "
 					+ " FROM t_board4 A "
@@ -70,6 +70,7 @@ public class BoardDAO {
 			@Override
 			public int executeQuery(ResultSet rs) throws SQLException {
 				if(rs.next()) {
+					result.setProfile_img(rs.getNString("profile_img"));
 					result.setI_user(rs.getInt("i_user")); // 작성자 i_user
 					result.setNm(rs.getNString("nm"));
 					result.setTitle(rs.getNString("title"));
@@ -77,6 +78,8 @@ public class BoardDAO {
 					result.setHits(rs.getInt("hits"));
 					result.setR_dt(rs.getNString("r_dt"));
 					result.setYn_like(rs.getInt("yn_like"));
+				
+					
 				}
 				return 1;
 			}
@@ -94,14 +97,39 @@ public class BoardDAO {
 				+ " ORDER BY i_board DESC ";
 		*/
 		
-		String sql = " SELECT A.* FROM ( "
-				+ " SELECT ROWNUM as RNUM, A.* FROM ( "
-				+ " SELECT A.i_board, A.title, A.hits, A.i_user, A.r_dt, B.nm "
-				+ " FROM t_board4 A INNER JOIN t_user B ON A.i_user = B.i_user "
-				+ " WHERE A.title LIKE ? "
-				+ " ORDER BY i_board DESC "
-				+ " ) A WHERE ROWNUM <= ? "
-				+ " ) A WHERE A.RNUM > ? ";
+		String sql = " SELECT A.* "
+				+" , NVL(B.cnt,0) as like_cnt "
+				+" , NVL(C.cnt,0) as cmt_cnt "
+				+" , decode(D.i_board,null,0,1) as my_like "
+				+" FROM ( "
+				+"      SELECT ROWNUM as RNUM, A.* "
+				+"      FROM ( "
+				+"          SELECT A.i_board, A.title, A.hits, A.i_user, A.r_dt, B.nm, B.profile_img "
+				+"          FROM t_board4 A "
+				+"          INNER JOIN t_user B "
+				+"          ON A.i_user = B.i_user "
+				+"          WHERE A.title LIKE ? "
+				+"          ORDER BY i_board DESC "
+				+"      ) A WHERE ROWNUM <= ? "
+				+" ) A "
+				+" LEFT JOIN ( "
+				+"     SELECT i_board, count(i_board) as cnt "
+				+"     FROM t_board4_like "
+				+"     GROUP BY i_board "
+				+" ) B "
+				+" ON A.i_board = B.i_board "
+				+" LEFT JOIN ( "
+				+"     SELECT i_board, count(i_board) as cnt "
+				+"     FROM t_board4_cmt "
+				+"     GROUP BY i_board"
+				+" ) C "
+				+" ON A.i_board = C.i_board "
+				+" LEFT JOIN ( "
+				+"      SELECT i_board "
+				+"      FROM t_board4_like "
+				+"      WHERE i_user = ? "
+				+"  ) D "
+				+" ON A.i_board = D.i_board ";
 		
 		int result = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 
@@ -110,6 +138,8 @@ public class BoardDAO {
 				ps.setNString(1,  param.getSearchText());
 				ps.setInt(2, param.geteIdx());
 				ps.setInt(3,  param.getsIdx());
+				ps.setInt(4, param.getI_user());
+				
 			}
 
 			@Override
@@ -121,6 +151,10 @@ public class BoardDAO {
 					int i_user = rs.getInt("i_user");
 					String r_dt = rs.getNString("r_dt");
 					String nm = rs.getNString("nm");
+					String profile_img = rs.getNString("profile_img");
+					int like_cnt = rs.getInt("like_cnt");
+					int cmt_cnt = rs.getInt("cmt_cnt");
+					int my_like = rs.getInt("my_like");
 					
 					BoardDomain vo = new BoardDomain();
 					vo.setI_board(i_board);
@@ -129,7 +163,10 @@ public class BoardDAO {
 					vo.setI_user(i_user);
 					vo.setR_dt(r_dt);
 					vo.setNm(nm);
-					
+					vo.setProfile_img(profile_img);
+					vo.setLike_cnt(like_cnt);
+					vo.setCmt_cnt(cmt_cnt);
+					vo.setMy_like(my_like);
 					list.add(vo);
 				}
 				return 1;

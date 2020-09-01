@@ -13,6 +13,7 @@ import com.koreait.pjt.MyUtils;
 import com.koreait.pjt.ViewResolver;
 import com.koreait.pjt.db.BoardDAO;
 import com.koreait.pjt.vo.BoardDomain;
+import com.koreait.pjt.vo.UserVO;
 
 @WebServlet("/board/list")
 public class BoardListSer extends HttpServlet {
@@ -27,7 +28,7 @@ public class BoardListSer extends HttpServlet {
 //		}
 		//
 //		HttpSession hs = (HttpSession)request.getSession();
-		
+		UserVO loginUser = MyUtils.getLoginUser(request);
 		if(MyUtils.isLogout(request)) {
 			response.sendRedirect("/login");
 			return;
@@ -43,6 +44,7 @@ public class BoardListSer extends HttpServlet {
 		recordCnt = (recordCnt == 0 ? 10 : recordCnt);
 		
 		BoardDomain param = new BoardDomain();
+		param.setI_user(loginUser.getI_user());
 		param.setRecord_cnt(recordCnt);
 		param.setSearchText("%"+searchText+"%");
 		int pagingCnt = BoardDAO.selPagingCnt(param);
