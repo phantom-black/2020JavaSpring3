@@ -20,6 +20,8 @@ public class BoardCmtSer extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String strI_board = request.getParameter("i_board");
 		int i_cmt = MyUtils.getIntParameter(request, "i_cmt");
+		String searchText = request.getParameter("searchText");
+		String searchType = request.getParameter("searchType");
 		
 		UserVO loginUser = MyUtils.getLoginUser(request);
 		
@@ -29,7 +31,9 @@ public class BoardCmtSer extends HttpServlet {
 		
 		BoardCmtDAO.delCmt(param);
 		
-		response.sendRedirect("/board/detail?i_board="+strI_board);
+		String target = String.format("/board/detail?i_board=%s&searchText=%s&searchType=%s", strI_board, searchText, searchType);
+		response.sendRedirect(target);
+//		response.sendRedirect("/board/detail?i_board="+strI_board);
 	}
 	
 	// 댓글 (등록/수정)
@@ -38,6 +42,9 @@ public class BoardCmtSer extends HttpServlet {
 		String strI_cmt = request.getParameter("i_cmt");
 		String strI_board = request.getParameter("i_board");
 		String cmt = request.getParameter("cmt");
+		
+		String searchText = request.getParameter("searchText");
+		String searchType = request.getParameter("searchType");
 		
 		int i_board = MyUtils.parseStrToInt(strI_board);
 		
@@ -62,6 +69,8 @@ public class BoardCmtSer extends HttpServlet {
 				break;
 		}
 		
-		response.sendRedirect("/board/detail?i_board="+strI_board);
+		String target = String.format("/board/detail?i_board=%s&searchText=%s&searchType=%s", strI_board, searchText, searchType);
+		response.sendRedirect(target);
+//		response.sendRedirect("/board/detail?i_board="+strI_board);
 	}
 }

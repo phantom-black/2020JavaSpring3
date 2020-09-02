@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>리스트</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
 	* {
 		font-family: 'Noto Sans KR', sans-serif;
@@ -96,12 +97,17 @@
 		width: 100%;
 		height: 100%;
 	}
+	.highlight {
+		color: red;
+		font-style: italic;
+		font-weight: bold;
+	}
 </style>
 </head>
 <body>
 	<div class="container">
 		<div class="usr-name">
-			<span id="usr-color">${loginUser.nm}</span>님 환영합니다
+			<span id="u                                                                                      sr-color">${loginUser.nm}</span>님 환영합니다
 			<a href="/profile">프로필</a>
 			<a href="/logout"><button id="logout">로그아웃</button></a>
 		</div>
@@ -129,17 +135,26 @@
 				<th>No</th>
 				<th>제목</th>
 				<th>조회수</th>
+				<th>좋아요</th>
+				<th> </th>
 				<th> </th>
 				<th>작성자</th>
 				<th>작성일</th>
-				<th>좋아요갯수</th>
-				<th>Y/N</th>
 			</tr>
 			<c:forEach items="${list}" var="item">
 				<tr class="itemRow" onclick="moveToDetail(${item.i_board})">
 					<td>${item.i_board}</td>
-					<td>${item.title}(${item.cmt_cnt})</td>
+					<td>${item.title} (${item.cmt_cnt})</td>
 					<td>${item.hits} </td>
+					<td> ${item.like_cnt}</td>
+					<td>
+						<c:if test="${item.yn_like==0 }">
+	                		<span class="material-icons">favorite_border</span>
+	                	</c:if>
+	                	<c:if test="${item.yn_like==1 }">
+	                		<span class="material-icons">favorite</span>
+	                	</c:if>
+					</td>
 					<td>
 						<div class="containerPImg">
 							<c:choose>
@@ -154,14 +169,17 @@
 					</td>
 					<td>${item.nm}</td>
 					<td>${item.r_dt}</td>
-					<td>${item.like_cnt }</td>
-					<td>${item.my_like }</td>
 				</tr>
 			</c:forEach>
 		</table>
 		<div>
 			<form action="/board/list">
-				<input type="search" name="searchText">
+				<select name="searchType">
+					<option value="a" ${searchType == 'a' ? 'selected' : ''}>제목</option>
+					<option value="b" ${searchType == 'b' ? 'selected' : ''}>내용</option>
+					<option value="c" ${searchType == 'c' ? 'selected' : ''}>제목+내용</option>
+				</select>
+				<input type="search" name="searchText" value="${param.searchText}">
 				<input type="submit" value="검색">
 			</form>
 		</div>
@@ -173,14 +191,14 @@
 					</c:when>
 					<c:otherwise>
 						<span>
-							<a href="/board/list?page=${item}&record_cnt=${param.record_cnt}&searchText=${param.searchText}">${item}</a>
+							<a href="/board/list?page=${item}&record_cnt=${param.record_cnt}&searchText=${param.searchText}&searchType=${searchType}">${item}</a>
 						</span>
 					</c:otherwise>
 				</c:choose>
 			</c:forEach>
 		</div>
 		<div>
-			<a href="regmod"><button id="write">글작성</button></a>
+			<a href="/regmod"><button id="write">글작성</button></a>
 		</div>
 	</div>
 	<script>
@@ -189,7 +207,7 @@
 		}
 	
 		function moveToDetail(i_board) {
-			location.href = '/board/detail?page=${page}&record_cnt=${param.record_cnt}&searchText=${param.searchText}&i_board=' + i_board
+			location.href = '/board/detail?page=${page}&record_cnt=${param.record_cnt}&searchType=${searchType}&searchText=${param.searchText}&i_board=' + i_board
 		}
 	</script>
 </body>

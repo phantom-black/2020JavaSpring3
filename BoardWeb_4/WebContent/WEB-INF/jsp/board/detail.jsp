@@ -60,20 +60,30 @@
             padding: 10px;
         }
         .btn a {
+  			display: inline-block;
+  			width: 100px;
             text-decoration: none;
             color: #58585a;
-            background-color: #f5d1ca;
-        }
-        .btn button {
-            width: 100px;
             background-color: #f5d1ca;
             text-align: center;
             border: none;
             padding: 8px;
-            color: #58585a;
             border-radius: 10px;
             margin-top: 20px;
             margin-right: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .btn button {
+        	cursor: pointer;
+            display: inline-block;
+  			width: 100px;
+            text-decoration: none;
+            color: #58585a;
+            background-color: #f5d1ca;
+            text-align: center;
+            border: none;
+            border-radius: 10px;
             font-weight: bold;
             font-size: 0.9em;
         }
@@ -95,6 +105,11 @@
 			width: 100%;
 			height: 100%;
 		}
+		.highlight {
+			color: red;
+			font-style: italic;
+			font-weight: bold;
+		}
     </style>
 </head>
 
@@ -103,7 +118,7 @@
         <table>
             <tr id="title">
                 <th>제목</th>
-                <th colspan="6">${data.title}</th>
+                <th colspan="6" id="elTitle">${data.title}</th>
             </tr>
             <tr class="boardInfo">
                 <th id="nm">작성자</th>
@@ -134,13 +149,13 @@
                 </td>
             </tr>
         </table>
-        <div class="ctnt">
+        <div class="ctnt" id="elCtnt">
             ${data.ctnt }
         </div>
         <div class="btn">
-             <a href="/board/list?page=${param.page}&record_cnt=${param.record_cnt}&searchText=${param.searchText}"><button type="button">목록</button></a>
+             <a href="/board/list?page=${param.page}&record_cnt=${param.record_cnt}&searchText=${param.searchText}&searchType=${param.searchType}"><button type="button">목록</button></a>
              <c:if test="${loginUser.i_user == data.i_user }">
-                <a href="/regmod?i_board=${data.i_board}">
+                <a href="/regmod?searchText=${param.searchText}&searchType=${param.searchType}&i_board=${data.i_board}">
                 	<button type="submit">수정</button>
                 </a>
                 <form id="delFrm" action="/board/del" method="post">
@@ -154,6 +169,8 @@
         	<form id="cmtFrm" action="/board/cmt" method="post">
         		<input type="hidden" name="i_cmt" value="0">
         		<input type="hidden" name="i_board" value="${data.i_board}">
+        		<input type="hidden" name="searchText" value="${param.searchText}">
+        		<input type="hidden" name="searchType" value="${param.searchType}">
         		<div>
         			<input type="text" id="cmt" name="cmt" placeholder="댓글내용">
         			<input type="submit" id="cmtSubmit" value="전송">
@@ -208,7 +225,7 @@
     	
     	function clkCmtDel(i_cmt) {
     		if(confirm('삭제하시겠습니까?')) {
-    			location.href = '/board/cmt?i_board=${data.i_board}&i_cmt=' + i_cmt
+    			location.href = '/board/cmt?searchText=${param.searchText}&searchType=${param.searchType}&i_board=${data.i_board}&i_cmt=' + i_cmt
     		}
     	}
     
@@ -223,12 +240,41 @@
     	}
     
 	    function toggleLike(yn_like) {
-	    	location.href="/board/toggleLike?page=${param.page}&record_cnt=${param.record_cnt}&searchText&i_board=${data.i_board}&yn_like="+yn_like // 쿼리스트링 =좌변: key값, =우변: value값
+	    	location.href="/board/toggleLike?page=${param.page}&record_cnt=${param.record_cnt}&searchText=${param.searchText}&searchType=${param.searchType}&i_board=${data.i_board}&yn_like="+yn_like // 쿼리스트링 =좌변: key값, =우변: value값
 	    }
     
         function submitDel() {
             delFrm.submit()
         }
+        
+        function doHighlight() {
+        	var searchText = '${param.searchText}'
+        	var searchType = '${param.searchType}'
+        	
+        	switch(searchType) {
+        	case 'a': // 제목
+        		var txt = elTitle.innerText
+        		txt = txt.replace(new RegExp('${param.searchText}', 'gi'), '<span class="highlight">'+searchText+'</span>')
+        		elTitle.innerHTML = txt
+        		break
+        	case 'b': // 내용
+        		var txt = elCtnt.innerText
+        		txt = txt.replace(new RegExp('${param.searchText}', 'gi'), '<span class="highlight">'+searchText+'</span>')
+        		elCtnt.innerHTML = txt
+        		break
+        	case 'c': // 제목+내용
+        		var txt = elTitle.innerText
+        		txt = txt.replace(new RegExp('${param.searchText}', 'gi'), '<span class="highlight">'+searchText+'</span>')
+        		elTitle.innerHTML = txt
+        		
+        		txt = elCtnt.innerText
+        		txt = txt.replace(new RegExp('${param.searchText}', 'gi'), '<span class="highlight">'+searchText+'</span>')
+        		elCtnt.innerHTML = txt
+        		break
+        	}
+        }
+        
+        doHighlight()
     </script>
 </body>
 </html>

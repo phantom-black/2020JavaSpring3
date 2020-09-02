@@ -9,10 +9,18 @@ public class BoardDomain extends BoardVO { // select용
 	private int eIdx;
 	private int sIdx;
 	private String searchText;
+	private String searchType;
 	private String profile_img;
 	private int like_cnt;
 	private int cmt_cnt;
-	private int my_like;
+
+	public String getSearchType() {
+		return searchType;
+	}
+
+	public void setSearchType(String searchType) {
+		this.searchType = searchType;
+	}
 
 	public int getLike_cnt() {
 		return like_cnt;
@@ -28,14 +36,6 @@ public class BoardDomain extends BoardVO { // select용
 
 	public void setCmt_cnt(int cmt_cnt) {
 		this.cmt_cnt = cmt_cnt;
-	}
-
-	public int getMy_like() {
-		return my_like;
-	}
-
-	public void setMy_like(int my_like) {
-		this.my_like = my_like;
 	}
 
 	public String getProfile_img() {

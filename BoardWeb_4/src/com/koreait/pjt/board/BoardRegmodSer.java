@@ -34,6 +34,9 @@ public class BoardRegmodSer extends HttpServlet {
 		
 		String strI_board = request.getParameter("i_board");
 		
+		String searchText = request.getParameter("searchText");
+		String searchType = request.getParameter("searchType");
+		
 		if(strI_board != null) {
 			int i_board = MyUtils.parseStrToInt(strI_board);
 			BoardVO param = new BoardVO();
