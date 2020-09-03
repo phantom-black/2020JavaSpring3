@@ -52,19 +52,27 @@ public class BoardDAO {
 		String sql = " SELECT B.nm, B.profile_img, A.i_user "
 					+ " , A.title, A.ctnt, A.hits, TO_CHAR(A.r_dt, 'YY/MM/DD HH24:MI') as r_dt "
 					+ " , DECODE(C.i_user, null, 0, 1) as yn_like "
+					+ " , nvl(D.cnt, 0) as like_cnt "
 					+ " FROM t_board4 A "
 					+ " INNER JOIN t_user B "
 					+ " ON A.i_user = B.i_user "
 					+ " LEFT JOIN t_board4_like C "
 					+ " ON A.i_board = C.i_board "
 					+ " AND C.i_user = ? "
+					+ " LEFT JOIN ( "
+					+ " 	SELECT i_board, count(i_board) as cnt FROM t_board4_like "
+					+ " 	WHERE i_board = ? "
+					+ " 	GROUP BY i_board "
+					+ " ) D "
+					+ " ON A.i_board = D.i_board "
 					+ " WHERE A.i_board=? ";
 		
 		int resultInt = JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
 			@Override
 			public void prepared(PreparedStatement ps) throws SQLException { // 쿼리문 문장 완성
 				ps.setInt(1, param.getI_user());
-				ps.setInt(2, param.getI_board());
+				ps.setInt(2,  param.getI_board());
+				ps.setInt(3, param.getI_board());
 			}
 
 			@Override
@@ -78,7 +86,7 @@ public class BoardDAO {
 					result.setHits(rs.getInt("hits"));
 					result.setR_dt(rs.getNString("r_dt"));
 					result.setYn_like(rs.getInt("yn_like"));
-				
+					result.setLike_cnt(rs.getInt("like_cnt"));
 					
 				}
 				return 1;
@@ -220,6 +228,38 @@ public class BoardDAO {
 				return 0;
 			}
 		});
+	}
+	
+	public static List<BoardDomain> selBoardLikeList(final int i_board) {
+		List<BoardDomain> list = new ArrayList();
+		
+		String sql = " SELECT B.i_user, B.nm, B.profile_img "
+				+ " FROM t_board4_like A "
+				+ " INNER JOIN t_user B "
+				+ " ON A.i_user = B.i_user "
+				+ " WHERE A.i_board = ? "
+				+ " ORDER BY A.R_DT ASC ";
+		
+		JdbcTemplate.executeQuery(sql, new JdbcSelectInterface() {
+			@Override
+			public void prepared(PreparedStatement ps) throws SQLException {
+				ps.setInt(1,  i_board);
+			}
+
+			@Override
+			public int executeQuery(ResultSet rs) throws SQLException {
+				while(rs.next()) {
+					BoardDomain vo = new BoardDomain();
+					vo.setI_user(rs.getInt("i_user"));
+					vo.setNm(rs.getNString("nm"));
+					vo.setProfile_img(rs.getNString("profile_img"));
+					
+					list.add(vo);
+				}
+				return 1;
+			}
+		});
+		return list;
 	}
 	
 	public static int updBoard(final BoardVO param) { // final 쓰면 더 빠르다고 함

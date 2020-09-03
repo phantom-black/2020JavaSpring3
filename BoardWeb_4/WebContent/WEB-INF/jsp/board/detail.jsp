@@ -7,24 +7,25 @@
     <meta charset="UTF-8">
     <title>상세페이지</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link
+	    rel="stylesheet"
+	    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css"
+	  />
     <style>
         * {
             font-family: 'Noto Sans KR', sans-serif;
             background-color: #faf9f7;
         }
-        *:focus {
-            outline: none;
-        }
+        *:focus { outline: none; }
         .container {
-            width: 700px;
+            width: 800px;
             margin: 30px auto;
         }
         table {
             border: 1px solid black;
             border-collapse: collapse;
         }
-        th,
-        td {
+        th, td {
             /* border: 1px solid black; */
             padding: 8px;
         }
@@ -38,19 +39,32 @@
             width: 10%;
         }
         #nm-1 {
-            width: 33%;
+            width: 23%;
         }
         #date {
-            width: 12%;
+            width: 10%;
         }
         #date-1 {
-            width: 25%;
+            width: 20%;
         }
         #hits {
             width: 10%;
         }
         #hits-1 {
-            width: 10%;
+            width: 5%;
+        }
+        #ynLike {
+        	width: 5%;
+        }
+        #likeCnt {
+        	width: 17%;
+        	font-size: 12px;
+        	line-height: 15px;
+        }
+        #likeCnt span {
+        	font-weight: bold;
+        	font-size: 18px;
+        	color: #6fa8aa;
         }
         .ctnt {
             border-right: 1px solid #58585a;
@@ -91,8 +105,19 @@
             display: inline-block;
         }
         .pointerCursor { 	cursor: pointer; }
+        .material-icons { color: #f00; }
         .marginTop30 { margin-top: 30px; }
-        #cmt { 	width: 580px; }
+        
+        /* 댓글창 */
+        #cmt { width: 690px; }
+        .cmtTable { width: 800px; }
+        .cmtTable th { border-bottom: 1px solid #000; }
+        
+        .cmtCtnt { width: 45%; }
+        .cmtUser { width: 20%; }
+        .cmtDate { width: 15%; }
+        .cmtBtn { width: 20%; }
+        
         .containerPImg {
 			display: inline-block;
 			width: 30px;
@@ -110,6 +135,25 @@
 			font-style: italic;
 			font-weight: bold;
 		}
+		#id_like { 
+			position: relative; 
+		}
+		#likeListContainer {
+			position: absolute;
+			left: 0px;
+			top: 35px;
+			width: 130px;
+			height: 150px;
+			padding: 5px;
+			border: 1px solid #bdc3c7;
+			overflow-y: auto;
+			background-color: #faf9f7;
+			opacity: 0;
+			transition-duration: 500ms;
+		}
+		#id_like:hover #likeListContainer {
+			opacity: 1;
+		}
     </style>
 </head>
 
@@ -118,7 +162,7 @@
         <table>
             <tr id="title">
                 <th>제목</th>
-                <th colspan="6" id="elTitle">${data.title}</th>
+                <th colspan="7" id="elTitle">${data.title}</th>
             </tr>
             <tr class="boardInfo">
                 <th id="nm">작성자</th>
@@ -139,12 +183,36 @@
                 <td id="date-1"> ${data.r_dt } <small>${data == null ? '' : '수정' }</small> </td>
                 <th id="hits">조회수</th>
                 <td id="hits-1">${data.hits }</td>
-                <td class="pointerCursor" onclick="toggleLike(${data.yn_like})">
+                <td id="ynLike" class="pointerCursor" onclick="toggleLike(${data.yn_like})">
                 	<c:if test="${data.yn_like==0 }">
                 		<span class="material-icons">favorite_border</span>
                 	</c:if>
                 	<c:if test="${data.yn_like==1 }">
                 		<span class="material-icons">favorite</span>
+                	</c:if>
+                </td>
+                <td id="likeCnt">
+                	<c:if test="${data.like_cnt > 0}">
+                		<div id="id_like"  class="pointerCursor">
+                			<span>${data.like_cnt}</span>명의 사람이<br>이 글을 좋아합니다.
+                			<div id="likeListContainer">
+                				<c:forEach items="${likeList}" var="item">
+                					<div>
+                						<div class="containerPImg">
+											<c:choose>
+												<c:when test="${item.profile_img != null}">
+													<img class="pImg" src="/img/user/${item.i_user}/${item.profile_img}">
+												</c:when>
+												<c:otherwise>
+													<img class="pImg" src="/img/default_profile.jpg">
+												</c:otherwise>
+											</c:choose>
+										</div>
+										${item.nm}
+                					</div>
+                				</c:forEach>
+                			</div>
+                		</div>
                 	</c:if>
                 </td>
             </tr>
@@ -181,7 +249,7 @@
         <div class="marginTop30">
         	<table class="cmtTable">
         		<tr>
-        			<th class="cmtCnt">내용</th>
+        			<th class="cmtCtnt">내용</th>
         			<th> </th>
         			<th class="cmtUser">글쓴이</th>
         			<th class="cmtDate">등록일</th>
@@ -256,12 +324,12 @@
         		var txt = elTitle.innerText
         		txt = txt.replace(new RegExp('${param.searchText}', 'gi'), '<span class="highlight">'+searchText+'</span>')
         		elTitle.innerHTML = txt
-        		break
+        		break;
         	case 'b': // 내용
         		var txt = elCtnt.innerText
         		txt = txt.replace(new RegExp('${param.searchText}', 'gi'), '<span class="highlight">'+searchText+'</span>')
         		elCtnt.innerHTML = txt
-        		break
+        		break;
         	case 'c': // 제목+내용
         		var txt = elTitle.innerText
         		txt = txt.replace(new RegExp('${param.searchText}', 'gi'), '<span class="highlight">'+searchText+'</span>')
@@ -270,7 +338,7 @@
         		txt = elCtnt.innerText
         		txt = txt.replace(new RegExp('${param.searchText}', 'gi'), '<span class="highlight">'+searchText+'</span>')
         		elCtnt.innerHTML = txt
-        		break
+        		break;
         	}
         }
         

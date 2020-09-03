@@ -11,6 +11,9 @@
 	<h1>프로필</h1>
 	<div>
 		<div>
+			<a href="/changePw"><button>비밀번호 변경</button></a>
+		</div>
+		<div>
 			<c:choose>
 				<c:when test="${data.profile_img != null}">
 					<img src="/img/user/${loginUser.i_user}/${data.profile_img}">
@@ -33,5 +36,13 @@
 		<div>이메일 : ${data.email}</div>
 		<div>가입일시 : ${data.r_dt}</div>
 	</div>
+	<script>
+		var proc = '${param.proc}'
+		switch(proc) {
+		case '1':
+			alert('비밀번호 변경 완료')
+			break
+		}
+	</script>
 </body>
 </html>

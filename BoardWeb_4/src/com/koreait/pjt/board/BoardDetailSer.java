@@ -46,9 +46,10 @@ public class BoardDetailSer extends HttpServlet {
 		BoardVO param = new BoardVO();
 		param.setI_user(loginUser.getI_user());
 		param.setI_board(i_board);
-		request.setAttribute("data", BoardDAO.selBoard(param));
 		
+		request.setAttribute("data", BoardDAO.selBoard(param));
 		request.setAttribute("cmtList", BoardCmtDAO.selCmtList(param));
+		request.setAttribute("likeList", BoardDAO.selBoardLikeList(i_board));
 		
 		ViewResolver.forward("board/detail", request, response); // 주솟값 아니라 파일명
 	}
