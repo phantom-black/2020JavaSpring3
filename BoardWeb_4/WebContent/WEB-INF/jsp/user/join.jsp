@@ -90,11 +90,11 @@
 				<div><label>비밀번호 확인</label><input type="password" name="user_pwre" placeholder="비밀번호 확인" required></div>
 				<div><label>이름</label><input type="text" name="nm" placeholder="이름" value="${data.nm }" required></div>
 				<div><label>이메일</label><input type="email" name="email" placeholder="이메일" value="${data.email }"></div>
-				<div><button type="submit">SUBMIT</button></div>
+				<div><button type="submit">제출</button></div>
 			</form>
 		</div>
-		<a href="login" id="login">LOGIN</a>
-		<div class="err">${msg }</div>
+		<a href="login" id="login">로그인</a>
+		<div class="err">${msg}</div>
 	</div>
 	<script>
 		function chk() {
