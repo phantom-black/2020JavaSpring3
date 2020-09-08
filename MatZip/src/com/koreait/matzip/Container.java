@@ -1,6 +1,8 @@
 package com.koreait.matzip;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,14 +37,31 @@ public class Container extends HttpServlet { // 호출은 tomcat이
 
 	// proc로 몰아주면 관리하기 편함
 	private void proc(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String temp = mapper.nav(request);
+		String temp = mapper.nav(request); // 보통 템플릿 파일명
 		
-		if(temp.indexOf("/") >= 0 && "redirect:".equals(temp.substring(temp.indexOf("/")))) {
-			response.sendRedirect(temp.substring(temp.indexOf("/")));
-			return;
-
+		if(temp.indexOf(":") >= 0) {
+			String prefix = temp.substring(0, temp.indexOf(":"));
+			String value = temp.substring(temp.indexOf(":") + 1);
+			
+			System.out.println("prefix: " + prefix);
+			System.out.println("value: " + value);
+			
+			if("redirect".equals(prefix)) {
+//				System.out.println("sub : " + temp.substring(0, temp.indexOf("/")));
+				response.sendRedirect(value);
+				return;
+				
+			} else if("ajax".equals(prefix)) {
+				response.setCharacterEncoding("UTF-8");
+				response.setContentType("application/json");
+				PrintWriter out = response.getWriter();
+				
+				System.out.println("value: " + value);
+				out.print(value);
+				return;
+			}
 		}
-		
+			
 		
 		switch(temp) {
 		case "405":

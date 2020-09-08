@@ -9,7 +9,15 @@
 </head>
 <body>
 	<div id="container">
-		<jsp:include page="/WEB-INF/view/${view}.jsp"></jsp:include>
+		<header>
+			~~님 환영합니다. 로그아웃 / 메뉴들
+		</header>
+		<section>
+			<jsp:include page="/WEB-INF/view/${view}.jsp"></jsp:include>
+		</section>
+		<footer>
+			회사 정보
+		</footer>
 	</div>
 </body>
 </html>

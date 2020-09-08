@@ -23,11 +23,15 @@ public class HandlerMapper {
 			switch(uriArr[2]) {
 			case "login":
 				return userCon.login(request);
-			}
+			case "loginProc":
+				return userCon.loginProc(request);
 			case "join":
 				return userCon.join(request);
 			case "joinProc":
 				return userCon.joinProc(request);
+			case "ajaxIdChk":
+				return userCon.ajaxIdChk(request);
+			}
 		}
 		
 		return "404"; // NotFound
