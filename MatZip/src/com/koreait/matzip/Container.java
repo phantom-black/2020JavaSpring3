@@ -61,7 +61,6 @@ public class Container extends HttpServlet { // 호출은 tomcat이
 				return;
 			}
 		}
-			
 		
 		switch(temp) {
 		case "405":
