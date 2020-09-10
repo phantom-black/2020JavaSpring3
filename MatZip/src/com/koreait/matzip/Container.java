@@ -37,6 +37,14 @@ public class Container extends HttpServlet { // 호출은 tomcat이
 
 	// proc로 몰아주면 관리하기 편함
 	private void proc(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String routerCheckResult = LoginChkInterceptor.routerChk(request);
+		if(routerCheckResult != null) {
+			response.sendRedirect(routerCheckResult);
+			return;
+		}
+		
+		
 		String temp = mapper.nav(request); // 보통 템플릿 파일명
 		
 		if(temp.indexOf(":") >= 0) {
@@ -62,7 +70,7 @@ public class Container extends HttpServlet { // 호출은 tomcat이
 			}
 		}
 		
-		switch(temp) {
+		switch(temp) { 
 		case "405":
 			temp = "/WEB-INF/view/error.jsp";
 			break;

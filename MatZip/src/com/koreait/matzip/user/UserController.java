@@ -1,6 +1,7 @@
 package com.koreait.matzip.user;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import com.koreait.matzip.Const;
 import com.koreait.matzip.ViewRef;
@@ -46,7 +47,10 @@ public class UserController {
 		
 		int result = service.login(param);
 		
-		if(result == 1) {
+		if(result == 1) { // 로그인 성공
+			HttpSession hs = request.getSession();
+			hs.setAttribute(Const.LOGIN_USER, param);
+			
 			return "redirect:/restaurant/restMap";
 		} else {
 			return "redirect:/user/login?user_id=" + user_id + "&error=" + result;
@@ -84,5 +88,11 @@ public class UserController {
 		int result = service.login(param);
 		
 		return String.format("ajax:{\"result\": %s}", result);
+	}
+	
+	public String logout(HttpServletRequest request) {
+		HttpSession hs = request.getSession();
+		hs.invalidate(); // session에 set한 정보들 다 날리는 메소드
+		return "redirect:/user/login";
 	}
 }

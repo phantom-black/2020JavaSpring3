@@ -33,7 +33,13 @@ public class UserService {
 			String salt = dbResult.getSalt();
 			String encryptPw = SecurityUtils.getEncrypt(param.getUser_pw(), salt);
 			
-			if(encryptPw.equals(dbResult.getUser_pw())) {
+			if(encryptPw.equals(dbResult.getUser_pw())) {	
+//				param = deResult; 하면 주솟값 연결이 끊기므로 이렇게 사용하면 안됨
+				param.setUser_pw(null);
+				param.setI_user(dbResult.getI_user());
+				param.setNm(dbResult.getNm());
+				param.setProfile_img(dbResult.getProfile_img());
+				
 				result = 1;
 			} else {
 				result = 3;
