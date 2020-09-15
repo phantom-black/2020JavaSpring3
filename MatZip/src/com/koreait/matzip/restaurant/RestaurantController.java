@@ -7,7 +7,7 @@ import com.koreait.matzip.CommonUtils;
 import com.koreait.matzip.Const;
 import com.koreait.matzip.SecurityUtils;
 import com.koreait.matzip.ViewRef;
-import com.koreait.matzip.vo.RestaurantDomain;
+import com.koreait.matzip.vo.RestaurantRecommendMenuVO;
 import com.koreait.matzip.vo.RestaurantVO;
 import com.koreait.matzip.vo.UserVO;
 
@@ -66,6 +66,9 @@ public class RestaurantController {
 		RestaurantVO param = new RestaurantVO();
 		param.setI_rest(i_rest);
 		
+		request.setAttribute("css", new String[] {"restaurant"});
+		
+		request.setAttribute("recommendMenuList", service.getRecommendMenuList(i_rest));
 		request.setAttribute("data",  service.getRest(param));
 		
 		request.setAttribute(Const.TITLE, "디테일");
@@ -74,16 +77,21 @@ public class RestaurantController {
 	}
 	
 	public String addRecMenusProc(HttpServletRequest request) {
+		int i_rest = service.addRecMenus(request); // 너무 길어서 이례적으로 파일처리만 request에게 넘겨줌
+		
+		return "redirect:/restaurant/restDetail?i_rest="+i_rest;
+	}
+	
+	public String ajaxDelRecMenu(HttpServletRequest request) {
 		int i_rest = CommonUtils.getIntParameter("i_rest", request);
+		int seq = CommonUtils.getIntParameter("seq", request);
 		
-		String[] menu_nmArr = request.getParameterValues("menu_nm");
-		String[] menu_priceArr = request.getParameterValues("menu_price");
-		// file은 getParameter나 getParameterValues로 받을 수 없다
+		RestaurantRecommendMenuVO param = new RestaurantRecommendMenuVO();
+		param.setI_rest(i_rest);
+		param.setSeq(seq);
 		
-		for(int i=0; i<menu_nmArr.length; i++) {
-			System.out.println(i + ": " + menu_nmArr[i] + ", " + menu_priceArr[i]);
-		}
+		int result = service.delRecMenu(param);
 		
-		return "redirect:/restaurant/restDetail?"+i_rest;
+		return "ajax:" + result;
 	}
 }
