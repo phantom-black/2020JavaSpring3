@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 
 import com.google.gson.Gson;
 import com.koreait.matzip.CommonUtils;
@@ -18,7 +19,7 @@ import com.koreait.matzip.vo.RestaurantVO;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
-public class RestaurantService {
+public class RestaurantService { // Service는 로직 단
 	private RestaurantDAO dao;
 	
 	public RestaurantService() {
@@ -40,9 +41,40 @@ public class RestaurantService {
 		return dao.selRest(param);
 	}
 	
-	public int addRecMenus(HttpServletRequest request) {
+	public int addMenus(HttpServletRequest request) { // 메뉴
+		int i_rest = CommonUtils.getIntParameter("i_rest", request);
+		System.out.println("i_rest: " + i_rest);
+		
+		String targetPath = request.getServletContext().getRealPath("/res/img/restaurant/" + i_rest + "/menu");
+		FileUtils.makeFolder(targetPath);
+		
+		RestaurantRecommendMenuVO param = new RestaurantRecommendMenuVO();
+		param.setI_rest(i_rest);
+		
+		try {
+			for(Part part : request.getParts()) {
+				String fileNm = part.getSubmittedFileName();
+				System.out.println("fileNm: " + fileNm);
+				
+				if(fileNm != null) {
+					String ext = FileUtils.getExt(fileNm);
+					String saveFileNm = UUID.randomUUID() + ext;
+					part.write(targetPath + "/" + saveFileNm); // 파일 저장
+					
+					param.setMenu_pic(saveFileNm);
+					dao.insMenu(param);
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return i_rest;
+	}
+	
+	public int addRecMenus(HttpServletRequest request) { // 추천메뉴
 		String savePath = request.getServletContext().getRealPath("/res/img/restaurant");
-		String tempPath = request.getServletContext().getRealPath(savePath + "/temp"); // 임시  cf) getRealPath() : WAS에서 돌아가고 있는 webapp까지의 절대 주솟값이 넘어옴(현재 위치의 절대 주솟값 <- 절대주소: C/D 등 드라이브부터 시작함)
+		String tempPath = savePath + "/temp"; // 임시  cf) getRealPath() : WAS에서 돌아가고 있는 webapp까지의 절대 주솟값이 넘어옴(현재 위치의 절대 주솟값 <- 절대주소: C/D 등 드라이브부터 시작함)
 		FileUtils.makeFolder(tempPath);
 		
 		int maxFileSize = 10_485_760; // 1024 * 1024 * 10 (10mb) // 최대 파일 사이즈 크기
@@ -114,6 +146,10 @@ public class RestaurantService {
 		}
 		
 		return i_rest;
+	}
+	
+	public List<RestaurantRecommendMenuVO> getMenuList(int i_rest) {
+		return dao.selMenuList(i_rest);
 	}
 	
 	public List<RestaurantRecommendMenuVO> getRecommendMenuList(int i_rest) {
